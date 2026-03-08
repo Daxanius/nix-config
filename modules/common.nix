@@ -14,15 +14,30 @@
 
   networking.networkmanager.enable = true;
 
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
+  };
+
   programs.hyprland = {
     enable = true;
     withUWSM = true;
     xwayland.enable = true;
   };
 
+  fonts.packages = with pkgs; [
+    font-awesome_4
+  ];
+
   programs.regreet.enable = true;
 
-  services.greetd.enable = true;
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd \"uwsm start default\"";
+      user = "daxanius";
+    };
+  };
 
   services.printing.enable = false;
 
@@ -33,6 +48,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
   };
 
   services.resolved.enable = true;
@@ -64,12 +80,8 @@
   environment.systemPackages = with pkgs; [
     vim
     mullvad-vpn
-    wofi
-    kdePackages.dolphin
-    kitty
+    tuigreet
   ];
-
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   xdg.portal = {
     enable = true;
@@ -77,6 +89,7 @@
   };
 
   home-manager = {
+    backupFileExtension = "back";
     extraSpecialArgs = { inherit inputs; };
     users = {
       "daxanius" = import ../home/daxanius.nix;

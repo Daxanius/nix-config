@@ -13,6 +13,12 @@
       url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+#    hyprland.url = "github:hyprwm/Hyprland";
+#    hypr-dynamic-cursors = {
+#        url = "github:VirtCode/hypr-dynamic-cursors";
+#        inputs.hyprland.follows = "hyprland"; 
+#x    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:

@@ -13,6 +13,7 @@
   nixpkgs.config.allowUnfree = true;
 
   networking.networkmanager.enable = true;
+  networking.wireless.userControlled.enable = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -54,6 +55,8 @@
   services.resolved.enable = true;
   services.mullvad-vpn.enable = true;
 
+  users.defaultUserShell = pkgs.fish;
+
   # Don't forget to set a password with ‘passwd’.
   users.users.daxanius = {
     isNormalUser = true;
@@ -62,6 +65,7 @@
   };
 
   programs.firefox.enable = true;
+  programs.fish.enable = true;
 
   programs.steam = {
     enable = true;
@@ -75,12 +79,12 @@
     Defaults pwfeedback
   '';
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim
+    helix
     mullvad-vpn
     tuigreet
+    ffmpeg-full
+    powertop
   ];
 
   xdg.portal = {

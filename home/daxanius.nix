@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   home.username = "daxanius";
@@ -29,7 +29,11 @@
   wayland.windowManager.hyprland = {
     systemd.enable = false;
     enable = true;
-    # systemd.enable = false;
+
+#    plugins = [
+#      inputs.hypr-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+#    ];
+    
     settings = {
       # Autostart applications correctly
       exec-once = [
@@ -41,33 +45,31 @@
       monitor = ",preferred,auto,1";
 
       "$mod" = "SUPER";
+
+      bindm = [
+        "$mod, mouse:272, movewindow"
+        "$mod, mouse:273, resizewindow"
+      ];
     
       bind = [
-        # --- Context Switching (Focus) ---
-        # Switch context/focus with Super + Arrow Keys
         "$mod, left,  movefocus, l"
         "$mod, right, movefocus, r"
         "$mod, up,    movefocus, u"
         "$mod, down,  movefocus, d"
 
-        # --- Window Movement ---
-        # Move windows with Super + Shift + Arrow Keys
         "$mod SHIFT, left,  movewindow, l"
         "$mod SHIFT, right, movewindow, r"
         "$mod SHIFT, up,    movewindow, u"
         "$mod SHIFT, down,  movewindow, d"
 
-        # --- Basic Controls ---
-        "$mod, Q, exec, kitty"
+        "$mod, S, exec, hyprshot -m region --clipboard-only"
+        "$mod, Return, exec, kitty"
         "$mod, C, killactive,"
-        "$mod, M, exit,"
-        "$mod, V, togglefloating,"
+        "$mod, Escape, exit,"
+        "$mod, F, togglefloating,"
         "$mod, R, exec, rofi -show drun"
       ] 
       ++ (
-        # --- Workspace Switching ---
-        # Generates binds for Super + [1-9] to switch workspace
-        # and Super + Shift + [1-9] to move window to workspace
         builtins.concatLists (builtins.genList (i:
           let
             ws = i + 1;
@@ -91,7 +93,7 @@
   # environment.
   home.packages = with pkgs; [
     rofi # App launcher.. for hyprland
-    kdePackages.dolphin # Dolphin file browser... for hyprland
+    nnn # File browser for hyprland
     kitty # Kitty terminal emulator... for hyprland
     waybar # A bar... for hyprland
     pavucontrol # Hyprland sound control
@@ -101,6 +103,7 @@
     discord
     bitwarden-desktop
     prismlauncher
+    hyprshot
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

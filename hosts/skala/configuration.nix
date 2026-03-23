@@ -22,6 +22,13 @@
   powerManagement.enable = true;
   powerManagement.powertop.enable = true;
 
+  zramSwap = {
+    enable = true;
+    priority = 100;
+    algorithm = "lz4";
+    memoryPercent = 100; # Compress up to x percent if memory is needed
+  };
+
   services.thermald.enable = true;
   services.auto-cpufreq.enable = true;
   services.auto-cpufreq.settings = {

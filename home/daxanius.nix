@@ -33,7 +33,7 @@
 #    plugins = [
 #      inputs.hypr-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
 #    ];
-    
+
     settings = {
       # Autostart applications correctly
       exec-once = [
@@ -86,6 +86,99 @@
     };
   };
 
+  programs.waybar = {
+    enable = true;
+
+    settings = {
+      mainBar = {
+        layer = "top";
+        position = "top";
+
+        modules-left = [
+          "clock"
+          "hyprland/workspaces"
+        ];
+
+        modules-center = [
+          "privacy"
+          "power-profiles-daemon"
+          "cpu"
+          "memory"
+        ];
+
+        modules-right = [
+          "pulseaudio"
+          "battery"
+          "tray"
+        ];
+
+        clock = {
+          format = "{:%H:%M}";
+          tooltip-format = "{:%A, %d %B %Y}";
+        };
+
+        cpu = {
+          format = "CPU {usage}%";
+        };
+
+        memory = {
+          format = "RAM {percentage}%";
+        };
+
+        temperature = {
+          critical-threshold = 90;
+          format = "{temperatureC}°C";
+        };
+
+        pulseaudio = {
+          format = "{volume}%";
+          format-muted = "muted";
+          on-click = "pavucontrol";
+        };
+
+        battery = {
+          format = "{capacity}%";
+        };
+
+        tray = {
+          spacing = 10;
+        };
+      };
+    };
+
+    style = ''
+    * {
+      border: none;
+      border-radius: 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+
+    window#waybar {
+      background: #1e1e2e;
+      color: #cdd6f4;
+      padding: 10px;
+    }
+
+    #workspaces button {
+      color: #cdd6f4;
+    }
+
+    #workspaces button.active {
+      background: #89b4fa;
+      color: #1e1e2e;
+    }
+
+    #pulseaudio.muted {
+      color: #f38ba8;
+    }
+
+    .module {
+      padding: 0 10px;
+    }
+    '';
+  };
+    
   programs.waybar.systemd.enable = true;
   services.mako.enable = true;
 
@@ -95,7 +188,6 @@
     rofi # App launcher.. for hyprland
     nnn # File browser for hyprland
     kitty # Kitty terminal emulator... for hyprland
-    waybar # A bar... for hyprland
     pavucontrol # Hyprland sound control
     mako # Notification daemon for hyprland
     libnotify # Requirement

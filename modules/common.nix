@@ -85,6 +85,7 @@
     tuigreet
     ffmpeg-full
     powertop
+    lm_sensors
   ];
 
   xdg.portal = {

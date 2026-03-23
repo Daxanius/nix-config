@@ -37,7 +37,6 @@
     settings = {
       # Autostart applications correctly
       exec-once = [
-        "${pkgs.waybar}/bin/waybar"
         "${pkgs.mako}/bin/mako"
         "uwsm app -- nm-applet --indicator"
       ];

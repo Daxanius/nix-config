@@ -25,7 +25,7 @@
   home.stateVersion = "25.11"; # Please read the comment before changing.
 
   nixpkgs.config.allowUnfree = true;
-
+  
   wayland.windowManager.hyprland = {
     systemd.enable = false;
     enable = true;
@@ -64,6 +64,7 @@
         "$mod, S, exec, hyprshot -m region --clipboard-only"
         "$mod, Return, exec, kitty"
         "$mod, C, killactive,"
+        "$mod, K, exec, hyprpicker --autocopy --format=hex --notify"
         "$mod, Escape, exit,"
         "$mod, F, togglefloating,"
         "$mod, R, exec, rofi -show drun"
@@ -99,44 +100,64 @@
         ];
 
         modules-center = [
-          "privacy"
-          "power-profiles-daemon"
+          "temperature"
+          "custom/fan"
           "cpu"
+          "custom/gpu"
           "memory"
+          "power-profiles-daemon"
         ];
 
         modules-right = [
+          "privacy"
           "pulseaudio"
           "battery"
           "tray"
         ];
 
         clock = {
-          format = "{:%H:%M}";
-          tooltip-format = "{:%A, %d %B %Y}";
-        };
-
-        cpu = {
-          format = "CPU {usage}%";
-        };
-
-        memory = {
-          format = "RAM {percentage}%";
+          format = "󰃰  {:%A, %d %B %R %Y}";
+          format-alt = "󰃰  {:%a %d-%m-%Y %T}";
+          tooltip-format = "{:%Z %r}";
         };
 
         temperature = {
           critical-threshold = 90;
-          format = "{temperatureC}°C";
+          format = " {temperatureC}°C";
+          hwmon-path = "/sys/class/hwmon/hwmon4/temp1_input";
+        };
+
+        "custom/fan" = {
+          format = "󰈐 {} RPM";
+          interval = 5;
+          exec = "${pkgs.lm_sensors}/bin/sensors | grep 'cpu_fan' | awk '{print $2}'";
+        };
+
+        cpu = {
+          format = " {usage}%";
+        };
+
+        "custom/gpu" = {
+          format = " {text}%";
+          interval = 2;
+          exec = "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits";
+          exec-if = "nvidia-smi";
+          tooltip = true;
+          on-hover = "nvidia-smi --query-gpu=temperature.gpu,memory.used,power.draw --format=csv,noheader";
+        };
+
+        memory = {
+          format = " {percentage}%";
         };
 
         pulseaudio = {
-          format = "{volume}%";
+          format = "  {volume}%";
           format-muted = "muted";
           on-click = "pavucontrol";
         };
 
         battery = {
-          format = "{capacity}%";
+          format = "󰁹 {capacity}%";
         };
 
         tray = {
@@ -149,31 +170,40 @@
     * {
       border: none;
       border-radius: 0;
-      font-family: monospace;
+      font-family: "JetBrainsMono Nerd Font";
       font-size: 16px;
     }
 
+    window#waybar>box {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
     window#waybar {
-      background: #1e1e2e;
-      color: #cdd6f4;
-      padding: 10px;
+      background-color: transparent;
+      border: none;
     }
 
     #workspaces button {
-      color: #cdd6f4;
+      border-radius: 5px;
+      margin: 5px;
     }
 
     #workspaces button.active {
-      background: #89b4fa;
-      color: #1e1e2e;
+      background: #23a2d5;
     }
 
     #pulseaudio.muted {
       color: #f38ba8;
     }
 
+    #temperature.critical {
+      color: #f38ba8;
+    }
+
     .module {
-      padding: 0 10px;
+      padding: 1 10px;
+      margin: 0 5px 0px 5px;
     }
     '';
   };
@@ -195,7 +225,17 @@
     bitwarden-desktop
     prismlauncher
     hyprshot
+    hyprpicker
+    papirus-icon-theme
   ];
+
+  gtk = {
+    enable = true;
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+  };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.

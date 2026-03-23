@@ -27,7 +27,8 @@
   };
 
   fonts.packages = with pkgs; [
-    font-awesome_4
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.symbols-only
   ];
 
   programs.regreet.enable = true;
@@ -86,6 +87,7 @@
     ffmpeg-full
     powertop
     lm_sensors
+    wl-clipboard
   ];
 
   xdg.portal = {

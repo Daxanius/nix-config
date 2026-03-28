@@ -88,6 +88,9 @@
     powertop
     lm_sensors
     wl-clipboard
+    nixfmt
+    nixd
+    vscode
   ];
 
   xdg.portal = {

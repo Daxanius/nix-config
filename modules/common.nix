@@ -83,6 +83,17 @@
 
   environment.systemPackages = with pkgs; [
     busybox
+    iproute2
+    iputils
+    curl
+    wget
+    dnsutils
+    inetutils
+    tcpdump
+    ethtool
+    nftables
+    conntrack-tools
+    networkmanager
     mullvad-vpn
     tuigreet
     ffmpeg-full

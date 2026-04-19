@@ -1,4 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   home.username = "daxanius";
@@ -6,10 +11,12 @@
 
   programs.git = {
     enable = true;
-    userName = "Daxanius";
-    userEmail = "balder.huybreghs@gmail.com";
+    settings.user = {
+      name = "Daxanius";
+      email = "balder.huybreghs@gmail.com";
+    };
 
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       push.autoSetupRemote = true;
     };
@@ -25,14 +32,15 @@
   home.stateVersion = "25.11"; # Please read the comment before changing.
 
   nixpkgs.config.allowUnfree = true;
-  
+
   wayland.windowManager.hyprland = {
     systemd.enable = false;
     enable = true;
 
-#    plugins = [
-#      inputs.hypr-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
-#    ];
+    plugins = [
+      pkgs.hyprlandPlugins.hypr-dynamic-cursors
+#     inputs.split-monitor-workspaces.packages.${pkgs.system}.split-monitor-workspaces
+    ];
 
     settings = {
       # Autostart applications correctly
@@ -40,7 +48,7 @@
         "${pkgs.mako}/bin/mako"
         "uwsm app -- nm-applet --indicator"
       ];
-    
+
       monitor = ",preferred,auto,1";
 
       "$mod" = "SUPER";
@@ -49,13 +57,13 @@
         "$mod, mouse:272, movewindow"
         "$mod, mouse:273, resizewindow"
       ];
-    
+
       bind = [
         "$mod, left,  movefocus, l"
         "$mod, right, movefocus, r"
         "$mod, up,    movefocus, u"
         "$mod, down,  movefocus, d"
-
+      
         "$mod SHIFT, left,  movewindow, l"
         "$mod SHIFT, right, movewindow, r"
         "$mod SHIFT, up,    movewindow, u"
@@ -68,21 +76,62 @@
         "$mod, Escape, exit,"
         "$mod, F, togglefloating,"
         "$mod, R, exec, rofi -show drun"
-      ] 
-      ++ (
-        builtins.concatLists (builtins.genList (i:
+      ]
+      ++ (builtins.concatLists (
+        builtins.genList (
+          i:
           let
             ws = i + 1;
-          in [
+          in
+          [
             "$mod, ${toString ws}, workspace, ${toString ws}"
             "$mod SHIFT, ${toString ws}, movetoworkspace, ${toString ws}"
           ]
-        ) 9)
-      );      
+        ) 9
+      ));
+
+      cursor = {
+        enable_hyprcursor = true;
+      };
 
       env = [
         "NIXOS_OZONE_WL,1"
+        "HYPRCURSOR_THEME,Bibata-Modern-Ice"
+        "HYPRCURSOR_SIZE,24"
       ];
+
+      "plugin:dynamic-cursors" = {
+        enabled = true;
+        mode = "stretch";
+        threshold = 10;
+      };
+
+      "plugin:dynamic-cursors:shake" = {
+        enabled = true;
+        timeout = 2000;
+        base = 4.0;
+      };
+
+      "plugin:dynamic-cursors:hyprcursor" = {
+        # use nearest-neighbour (pixelated) scaling when magnifing beyond texture size
+        # this will also have effect without hyprcursor support being enabled
+        # 0 / false - never use pixelated scaling
+        # 1 / true  - use pixelated when no highres image
+        # 2         - always use pixleated scaling
+        nearest = true;
+
+        # enable dedicated hyprcursor support
+        enabled = true;
+
+        # resolution in pixels to load the magnified shapes at
+        # be warned that loading a very high-resolution image will take a long time and might impact memory consumption
+        # -1 means we use [normal cursor size] * [shake:base option]
+        resolution = -1;
+        # shape to use when clientside cursors are being magnified
+        # see the shape-name property of shape rules for possible names
+        # specifying clientside will use the actual shape, but will be pixelated
+        fallback = "none";
+      };
     };
   };
 
@@ -105,12 +154,13 @@
           "cpu"
           "custom/gpu"
           "memory"
-          "power-profiles-daemon"
+          "custom/power"
         ];
 
         modules-right = [
           "privacy"
           "pulseaudio"
+          "custom/brightness"
           "battery"
           "tray"
         ];
@@ -133,8 +183,28 @@
           exec = "${pkgs.lm_sensors}/bin/sensors | grep 'cpu_fan' | awk '{print $2}'";
         };
 
+        "custom/brightness" = {
+          exec = "brightnessctl -m | cut -d, -f4";
+          interval = 2;
+          format = "󰃠 {}";
+          on-scroll-up = "brightnessctl set +5%";
+          on-scroll-down = "brightnessctl set 5%-";
+        };
+
         cpu = {
           format = " {usage}%";
+        };
+
+        "custom/power" = {
+          exec = ''
+            if [ "$(cat /sys/class/power_supply/AC*/online 2>/dev/null | head -n1)" = "1" ]; then
+              echo "AC: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+            else
+              echo "BAT: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+            fi
+          '';
+          interval = 5;
+          format = " {}";
         };
 
         "custom/gpu" = {
@@ -167,55 +237,65 @@
     };
 
     style = ''
-    * {
-      border: none;
-      border-radius: 0;
-      font-family: "JetBrainsMono Nerd Font";
-      font-size: 16px;
-    }
+      * {
+        border: none;
+        border-radius: 0;
+        font-family: "JetBrainsMono Nerd Font";
+        font-size: 16px;
+      }
 
-    window#waybar>box {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
+      window#waybar>box {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
 
-    window#waybar {
-      background-color: transparent;
-      border: none;
-    }
+      window#waybar {
+        background-color: transparent;
+        border: none;
+      }
 
-    #workspaces button {
-      border-radius: 5px;
-      margin: 5px;
-    }
+      #workspaces button {
+        border-radius: 5px;
+        margin: 5px;
+      }
 
-    #workspaces button.active {
-      background: #23a2d5;
-    }
+      #workspaces button.active {
+        background: #23a2d5;
+      }
 
-    #pulseaudio.muted {
-      color: #f38ba8;
-    }
+      #pulseaudio.muted {
+        color: #f38ba8;
+      }
 
-    #temperature.critical {
-      color: #f38ba8;
-    }
+      #temperature.critical {
+        color: #f38ba8;
+      }
 
-    .module {
-      padding: 1 10px;
-      margin: 0 5px 0px 5px;
-    }
+      .module {
+        padding: 1 10px;
+        margin: 0 5px 0px 5px;
+      }
     '';
   };
-    
+
   programs.waybar.systemd.enable = true;
   services.mako.enable = true;
+
+  home.pointerCursor = {
+    gtk.enable = true;
+    x11.enable = true;
+
+    package = pkgs.bibata-cursors;
+    name = "Bibata-Modern-Ice";
+    size = 24;
+  };
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     rofi # App launcher.. for hyprland
-    nnn # File browser for hyprland
+    kdePackages.dolphin # File browser for hyprland
+    kdePackages.kio-admin
     kitty # Kitty terminal emulator... for hyprland
     pavucontrol # Hyprland sound control
     mako # Notification daemon for hyprland
@@ -227,10 +307,19 @@
     hyprshot
     hyprpicker
     papirus-icon-theme
+    helix
+    zellij
+    bambu-studio
+    blender
+    jetbrains.idea-oss
+    obs-studio
+    spotify
+    vscode
   ];
 
   gtk = {
     enable = true;
+    gtk4.theme = config.gtk.theme;
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;

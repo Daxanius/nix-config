@@ -13,7 +13,7 @@
   nixpkgs.config.allowUnfree = true;
 
   networking.networkmanager.enable = true;
-  networking.wireless.userControlled.enable = true;
+  networking.wireless.userControlled = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -42,6 +42,7 @@
   };
 
   services.printing.enable = false;
+  services.udisks2.enable = true;
 
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -81,7 +82,7 @@
   '';
 
   environment.systemPackages = with pkgs; [
-    helix
+    busybox
     mullvad-vpn
     tuigreet
     ffmpeg-full
@@ -90,7 +91,7 @@
     wl-clipboard
     nixfmt
     nixd
-    vscode
+    brightnessctl
   ];
 
   xdg.portal = {

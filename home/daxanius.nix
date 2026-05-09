@@ -301,6 +301,7 @@
     mako # Notification daemon for hyprland
     libnotify # Requirement
     networkmanagerapplet
+    fluffychat
     discord
     bitwarden-desktop
     prismlauncher
@@ -315,6 +316,7 @@
     obs-studio
     spotify
     vscode
+    thunderbird
   ];
 
   gtk = {

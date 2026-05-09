@@ -1,19 +1,29 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
-  imports =
-    [
-      inputs.home-manager.nixosModules.home-manager
-    ];
+  imports = [
+    inputs.home-manager.nixosModules.home-manager
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nixpkgs.config.allowUnfree = true;
+#  programs.light.enable = true;
 
   networking.networkmanager.enable = true;
   networking.wireless.userControlled = true;
+  networking.firewall.enable = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -56,14 +66,21 @@
 
   services.resolved.enable = true;
   services.mullvad-vpn.enable = true;
+  services.mullvad-vpn.package = pkgs.mullvad-vpn;
+  services.tailscale.enable = true;
 
   users.defaultUserShell = pkgs.fish;
+
+  systemd.network.wait-online.enable = false;
 
   # Don't forget to set a password with ‘passwd’.
   users.users.daxanius = {
     isNormalUser = true;
     description = "Daxanius";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
   };
 
   programs.firefox.enable = true;
@@ -77,11 +94,20 @@
     gamescopeSession.enable = true;
   };
 
+  programs.steam.extraCompatPackages = with pkgs; [
+    proton-ge-bin
+  ];
+
+
   security.sudo.extraConfig = ''
     Defaults pwfeedback
   '';
 
   environment.systemPackages = with pkgs; [
+    xorg.xbacklight
+    man-pages
+    networkmanager
+    gdb
     busybox
     iproute2
     iputils
@@ -93,8 +119,6 @@
     ethtool
     nftables
     conntrack-tools
-    networkmanager
-    mullvad-vpn
     tuigreet
     ffmpeg-full
     powertop
@@ -103,11 +127,13 @@
     nixfmt
     nixd
     brightnessctl
+    mangohud
+    gamemode
   ];
 
   xdg.portal = {
     enable = true;
-    extraPortals =  with pkgs; [ xdg-desktop-portal-hyprland ];
+    extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
   };
 
   home-manager = {
@@ -125,7 +151,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

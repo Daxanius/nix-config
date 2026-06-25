@@ -21,6 +21,16 @@
   nixpkgs.config.allowUnfree = true;
 #  programs.light.enable = true;
 
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    lldb
+  ];
+
+  services.monado = {
+    enable = true;
+    defaultRuntime = true; # Register as default OpenXR runtime
+  };
+
   networking.networkmanager.enable = true;
   networking.wireless.userControlled = true;
   networking.firewall.enable = true;
@@ -113,6 +123,11 @@
     iputils
     curl
     wget
+    btop-cuda
+    sysstat
+    htop
+    bpftrace
+    perf
     dnsutils
     inetutils
     tcpdump
@@ -129,12 +144,11 @@
     brightnessctl
     mangohud
     gamemode
+    pipewire
+    pulseaudio
+    alsa-lib
+    direnv
   ];
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
-  };
 
   home-manager = {
     backupFileExtension = "back";

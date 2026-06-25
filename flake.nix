@@ -10,7 +10,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
+      url = "github:nix-community/lanzaboote/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -24,6 +24,16 @@
         inputs.lanzaboote.nixosModules.lanzaboote
 
         ({ pkgs, lib, ... }: {
+          # Fakking electron
+          nixpkgs.config.permittedInsecurePackages = [
+            "electron-39.8.10"
+          ];
+
+#          home-manager = {
+#            useGlobalPkgs = true;
+#            useUserPackages = true;
+#          };
+          
           environment.systemPackages = [
             pkgs.sbctl
           ];

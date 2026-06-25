@@ -34,12 +34,13 @@
   nixpkgs.config.allowUnfree = true;
 
   wayland.windowManager.hyprland = {
+    configType = "hyprlang";
     systemd.enable = false;
     enable = true;
 
     plugins = [
       pkgs.hyprlandPlugins.hypr-dynamic-cursors
-#     inputs.split-monitor-workspaces.packages.${pkgs.system}.split-monitor-workspaces
+#      inputs.split-monitor-workspaces.packages.${pkgs.system}.split-monitor-workspaces
     ];
 
     settings = {
@@ -303,21 +304,33 @@
     networkmanagerapplet
     fluffychat
     discord
-    bitwarden-desktop
     prismlauncher
     hyprshot
     hyprpicker
     papirus-icon-theme
     helix
     zellij
-    bambu-studio
+#     bambu-studio
     blender
     jetbrains.idea-oss
     obs-studio
     spotify
     vscode
     thunderbird
+    sourcegit
+    jetbrains.clion
+    jetbrains.rust-rover
+    cmakeCurses
+    onlyoffice-desktopeditors
   ];
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-hyprland
+      kdePackages.xdg-desktop-portal-kde
+    ];
+  };
 
   gtk = {
     enable = true;
@@ -325,6 +338,15 @@
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
+    };
+  };
+
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      "inode/directory" = "org.kde.dolphin.desktop";
+      "x-scheme-handler/file" = "org.kde.dolphin.desktop";
     };
   };
 

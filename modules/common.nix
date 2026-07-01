@@ -33,11 +33,7 @@
 
   services.udev = {
     packages = with pkgs; [
-      qmk
-      qmk-udev-rules # the only relevant
-      qmk_hid
       via
-      vial
     ]; # packages
   }; # udev
 
@@ -158,10 +154,7 @@
     alsa-lib
     direnv
     qmk
-    qmk_hid
-    qmk-udev-rules
     via
-    vial
   ];
 
   home-manager = {

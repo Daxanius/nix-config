@@ -70,5 +70,10 @@
     };
   };
 
+  hardware.keyboard.qmk = {
+    enable = true;
+    keychronSupport = true;
+  };
+
   services.blueman.enable = true;
 }

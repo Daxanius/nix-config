@@ -77,6 +77,10 @@
         "$mod, Escape, exit,"
         "$mod, F, togglefloating,"
         "$mod, R, exec, rofi -show drun"
+
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%-"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ]
       ++ (builtins.concatLists (
         builtins.genList (

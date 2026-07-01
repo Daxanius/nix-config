@@ -31,6 +31,16 @@
     defaultRuntime = true; # Register as default OpenXR runtime
   };
 
+  services.udev = {
+    packages = with pkgs; [
+      qmk
+      qmk-udev-rules # the only relevant
+      qmk_hid
+      via
+      vial
+    ]; # packages
+  }; # udev
+
   networking.networkmanager.enable = true;
   networking.wireless.userControlled = true;
   networking.firewall.enable = true;
@@ -108,7 +118,6 @@
     proton-ge-bin
   ];
 
-
   security.sudo.extraConfig = ''
     Defaults pwfeedback
   '';
@@ -148,6 +157,11 @@
     pulseaudio
     alsa-lib
     direnv
+    qmk
+    qmk_hid
+    qmk-udev-rules
+    via
+    vial
   ];
 
   home-manager = {

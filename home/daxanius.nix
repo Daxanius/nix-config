@@ -322,6 +322,7 @@
     jetbrains.rust-rover
     cmakeCurses
     onlyoffice-desktopeditors
+    vlc
   ];
 
   xdg.portal = {

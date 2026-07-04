@@ -295,6 +295,9 @@
     size = 24;
   };
 
+  # For Monado:
+  xdg.configFile."openxr/1/active_runtime.json".source = "${pkgs.monado}/share/openxr/1/openxr_monado.json";
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -327,6 +330,7 @@
     cmakeCurses
     onlyoffice-desktopeditors
     vlc
+    geogebra
   ];
 
   xdg.portal = {

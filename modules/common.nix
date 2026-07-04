@@ -18,6 +18,7 @@
     "nix-command"
     "flakes"
   ];
+  
   nixpkgs.config.allowUnfree = true;
 #  programs.light.enable = true;
 
@@ -31,13 +32,22 @@
     defaultRuntime = true; # Register as default OpenXR runtime
   };
 
+  systemd.user.services.monado.environment = {
+    STEAMVR_LH_ENABLE = "1";
+    XRT_COMPOSITOR_COMPUTE = "1";
+    WMR_HANDTRACKING = "0";
+  };
+
   services.udev = {
     packages = with pkgs; [
       via
     ]; # packages
   }; # udev
 
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+  };
+  
   networking.wireless.userControlled = true;
   networking.firewall.enable = true;
 
@@ -80,6 +90,7 @@
     jack.enable = true;
   };
 
+# HOTSPOT??
   services.resolved.enable = true;
   services.mullvad-vpn.enable = true;
   services.mullvad-vpn.package = pkgs.mullvad-vpn;
@@ -109,6 +120,14 @@
     localNetworkGameTransfers.openFirewall = true;
     gamescopeSession.enable = true;
   };
+
+  programs.gamescope = {
+    enable = true;
+    enableWsi = true;
+    capSysNice = true;
+  };
+
+  programs.gamemode.enable = true;
 
   programs.steam.extraCompatPackages = with pkgs; [
     proton-ge-bin
@@ -148,13 +167,15 @@
     nixd
     brightnessctl
     mangohud
-    gamemode
     pipewire
     pulseaudio
     alsa-lib
     direnv
     qmk
     via
+    xterm
+    ripgrep
+    steam-run
   ];
 
   home-manager = {

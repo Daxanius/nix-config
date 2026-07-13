@@ -354,6 +354,8 @@
     onlyoffice-desktopeditors
     vlc
     geogebra
+    baobab
+    vesktop
   ];
 
   xdg.portal = {

@@ -232,6 +232,7 @@
     ripgrep
     steam-run
     android-tools
+    hyprmon
   ];
 
   home-manager = {

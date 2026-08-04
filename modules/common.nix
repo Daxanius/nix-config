@@ -75,10 +75,8 @@
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 
-  programs.hyprland = {
+  programs.niri = {
     enable = true;
-    withUWSM = true;
-    xwayland.enable = true;
   };
 
   fonts.packages = with pkgs; [
@@ -91,7 +89,7 @@
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd \"uwsm start default\"";
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
       user = "daxanius";
     };
   };

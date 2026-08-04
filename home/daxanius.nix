@@ -59,113 +59,37 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  wayland.windowManager.hyprland = {
-    configType = "hyprlang";
-    systemd.enable = false;
-    enable = true;
+  programs.niri.settings = {
+    environment."NIXOS_OZONE_WL" = "1";
+    outputs."CHANGE-ME-eg-DP-1" = { scale = 1.0; };
 
-    plugins = [
-      pkgs.hyprlandPlugins.hypr-dynamic-cursors
-#      inputs.split-monitor-workspaces.packages.${pkgs.system}.split-monitor-workspaces
-    ];
-
-    settings = {
-      # Autostart applications correctly
-      exec-once = [
-        "${pkgs.mako}/bin/mako"
-        "uwsm app -- nm-applet --indicator"
-      ];
-
-      monitor = ",highrr,auto,1";
-
-      "$mod" = "SUPER";
-
-      bindm = [
-        "$mod, mouse:272, movewindow"
-        "$mod, mouse:273, resizewindow"
-      ];
-
-      bind = [
-        "$mod, left,  movefocus, l"
-        "$mod, right, movefocus, r"
-        "$mod, up,    movefocus, u"
-        "$mod, down,  movefocus, d"
-      
-        "$mod SHIFT, left,  movewindow, l"
-        "$mod SHIFT, right, movewindow, r"
-        "$mod SHIFT, up,    movewindow, u"
-        "$mod SHIFT, down,  movewindow, d"
-
-        "$mod, S, exec, hyprshot -m region --clipboard-only"
-        "$mod, Return, exec, kitty"
-        "$mod, C, killactive,"
-        "$mod, K, exec, hyprpicker --autocopy --format=hex --notify"
-        "$mod, Escape, exit,"
-        "$mod, F, togglefloating,"
-        "$mod, R, exec, rofi -show drun"
-
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%+"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%-"
-        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-      ]
-      ++ (builtins.concatLists (
-        builtins.genList (
-          i:
-          let
-            ws = i + 1;
-          in
-          [
-            "$mod, ${toString ws}, workspace, ${toString ws}"
-            "$mod SHIFT, ${toString ws}, movetoworkspace, ${toString ws}"
-          ]
-        ) 9
-      ));
-
-      cursor = {
-        enable_hyprcursor = true;
-      };
-
-      env = [
-        "NIXOS_OZONE_WL,1"
-        "HYPRCURSOR_THEME,Bibata-Modern-Ice"
-        "HYPRCURSOR_SIZE,24"
-      ];
-
-      "plugin:dynamic-cursors" = {
-        enabled = true;
-        mode = "stretch";
-        threshold = 10;
-      };
-
-      "plugin:dynamic-cursors:shake" = {
-        enabled = true;
-        timeout = 2000;
-        base = 4.0;
-      };
-
-      "plugin:dynamic-cursors:hyprcursor" = {
-        # use nearest-neighbour (pixelated) scaling when magnifing beyond texture size
-        # this will also have effect without hyprcursor support being enabled
-        # 0 / false - never use pixelated scaling
-        # 1 / true  - use pixelated when no highres image
-        # 2         - always use pixleated scaling
-        nearest = true;
-
-        # enable dedicated hyprcursor support
-        enabled = true;
-
-        # resolution in pixels to load the magnified shapes at
-        # be warned that loading a very high-resolution image will take a long time and might impact memory consumption
-        # -1 means we use [normal cursor size] * [shake:base option]
-        resolution = -1;
-        # shape to use when clientside cursors are being magnified
-        # see the shape-name property of shape rules for possible names
-        # specifying clientside will use the actual shape, but will be pixelated
-        fallback = "none";
-      };
+    binds = with config.lib.niri.actions; {
+      "Mod+Left".action = focus-column-left;
+      "Mod+Right".action = focus-column-right;
+      "Mod+Up".action = focus-window-up;
+      "Mod+Down".action = focus-window-down;
+      "Mod+Shift+Left".action = move-column-left;
+      "Mod+Shift+Right".action = move-column-right;
+      "Mod+Shift+Up".action = move-window-up;
+      "Mod+Shift+Down".action = move-window-down;
+      "Mod+S".action = spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy";
+      "Mod+Return".action = spawn "kitty";
+      "Mod+C".action = close-window;
+      "Mod+K".action = spawn "hyprpicker" "--autocopy" "--format=hex" "--notify";
+      "Mod+Escape".action = quit;
+      "Mod+F".action = toggle-window-floating;
+      "Mod+R".action = spawn "rofi" "-show" "drun";
+      "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%+";
+      "XF86AudioLowerVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%-";
+      "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
     };
-  };
 
+    spawn-at-startup = [
+      { command = [ "uwsm" "app" "--" "nm-applet" "--indicator" ]; }
+      { command = [ "systemctl" "--user" "reset-failed" "waybar.service" ]; }
+    ];
+   };
+  
   programs.waybar = {
     enable = true;
 
@@ -176,7 +100,7 @@
 
         modules-left = [
           "clock"
-          "hyprland/workspaces"
+          "niri/workspaces"
         ];
 
         modules-center = [
@@ -324,10 +248,10 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    rofi # App launcher.. for hyprland
-    kdePackages.dolphin # File browser for hyprland
+    rofi # App launcher
+    kdePackages.dolphin # File browser
     kdePackages.kio-admin
-    kitty # Kitty terminal emulator... for hyprland
+    kitty # Kitty terminal emulator
     pavucontrol # Hyprland sound control
     mako # Notification daemon for hyprland
     libnotify # Requirement
@@ -335,7 +259,9 @@
     fluffychat
     discord
     prismlauncher
-    hyprshot
+    grim
+    slurp
+    wl-clipboard
     hyprpicker
     papirus-icon-theme
     helix
@@ -363,7 +289,6 @@
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
-      xdg-desktop-portal-hyprland
       kdePackages.xdg-desktop-portal-kde
     ];
   };

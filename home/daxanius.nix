@@ -76,7 +76,7 @@
         "uwsm app -- nm-applet --indicator"
       ];
 
-      monitor = ",preferred,auto,1";
+      monitor = ",highrr,auto,1";
 
       "$mod" = "SUPER";
 
@@ -342,7 +342,7 @@
     zellij
 #     bambu-studio
     blender
-    jetbrains.idea-oss
+    jetbrains.idea
     obs-studio
     spotify
     vscode
@@ -356,6 +356,8 @@
     geogebra
     baobab
     vesktop
+    oculante
+    tracy
   ];
 
   xdg.portal = {
@@ -381,6 +383,26 @@
     defaultApplications = {
       "inode/directory" = "org.kde.dolphin.desktop";
       "x-scheme-handler/file" = "org.kde.dolphin.desktop";
+
+      # Images -> oculante
+      "image/png" = "oculante.desktop";
+      "image/jpeg" = "oculante.desktop";
+      "image/jpg" = "oculante.desktop";
+      "image/gif" = "oculante.desktop";
+      "image/webp" = "oculante.desktop";
+      "image/bmp" = "oculante.desktop";
+      "image/tiff" = "oculante.desktop";
+      "image/x-icon" = "oculante.desktop";
+      "image/svg+xml" = "oculante.desktop";
+
+      # Videos -> vlc
+      "video/mp4" = "vlc.desktop";
+      "video/x-matroska" = "vlc.desktop";
+      "video/webm" = "vlc.desktop";
+      "video/quicktime" = "vlc.desktop";
+      "video/mpeg" = "vlc.desktop";
+      "video/x-msvideo" = "vlc.desktop";
+      "video/ogg" = "vlc.desktop";
     };
   };
 

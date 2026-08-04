@@ -32,6 +32,11 @@
     defaultRuntime = true; # Register as default OpenXR runtime
   };
 
+  services.playit = {
+    enable = true;
+    secretPath = "/home/daxanius/dev/nix-config/playit_secret.toml";
+  };
+
   services.wivrn = {
     enable = true;
     openFirewall = true;
@@ -107,7 +112,7 @@
 # HOTSPOT??
   services.resolved.enable = true;
   services.mullvad-vpn.enable = true;
-  services.mullvad-vpn.package = pkgs.mullvad-vpn;
+  services.mullvad-vpn.gui.enable = true;
   services.tailscale.enable = true;
 
   users.defaultUserShell = pkgs.fish;

@@ -13,6 +13,8 @@
       url = "github:nix-community/lanzaboote/v1.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -22,6 +24,7 @@
       commonModules = [
         inputs.home-manager.nixosModules.default
         inputs.lanzaboote.nixosModules.lanzaboote
+        inputs.playit-nixos-module.nixosModules.default
 
         ({ pkgs, lib, ... }: {
           # Fakking electron

@@ -237,6 +237,7 @@
   services.mako.enable = true;
 
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     x11.enable = true;
 
@@ -288,6 +289,7 @@
 
   xdg.portal = {
     enable = true;
+    config.common.default = "*";
     extraPortals = with pkgs; [
       kdePackages.xdg-desktop-portal-kde
     ];

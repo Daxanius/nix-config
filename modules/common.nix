@@ -84,7 +84,7 @@
     nerd-fonts.symbols-only
   ];
 
-  programs.regreet.enable = true;
+  services.displayManager.regreet.enable = true;
 
   services.greetd = {
     enable = true;
@@ -196,7 +196,7 @@
   '';
 
   environment.systemPackages = with pkgs; [
-    xorg.xbacklight
+    xbacklight
     man-pages
     networkmanager
     gdb

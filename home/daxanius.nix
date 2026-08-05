@@ -133,17 +133,6 @@
     ];
   };
   
-
-  home.pointerCursor = {
-    enable = true;
-    gtk.enable = true;
-    x11.enable = true;
-
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Ice";
-    size = 24;
-  };
-
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
@@ -189,15 +178,6 @@
       kdePackages.xdg-desktop-portal-kde
     ];
   };
-
-  # gtk = {
-  #  enable = true;
-  #  gtk4.theme = config.gtk.theme;
-  #  iconTheme = {
-  #    name = "Papirus-Dark";
-  #    package = pkgs.papirus-icon-theme;
-  #  };
-  #};
 
   xdg.desktopEntries.oculante = {
     name = "Oculante";

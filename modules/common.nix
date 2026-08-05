@@ -8,6 +8,7 @@
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
+    inputs.noctalia-greeter.nixosModules.default
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -81,9 +82,8 @@
     nerd-fonts.symbols-only
   ];
 
-  services.displayManager.regreet = {
+  programs.noctalia-greeter = {
     enable = true;
-    cageArgs = [ "-d" "-m" "last" ];
   };
   
   services.greetd = {

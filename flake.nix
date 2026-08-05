@@ -18,8 +18,6 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -29,20 +27,10 @@
       commonModules = [
         inputs.home-manager.nixosModules.default
         inputs.lanzaboote.nixosModules.lanzaboote
-        inputs.playit-nixos-module.nixosModules.default
         inputs.niri.nixosModules.niri
 
         ({ pkgs, lib, ... }: {
-          # Fakking electron
-          nixpkgs.config.permittedInsecurePackages = [
-            "electron-39.8.10"
-          ];
-
-#          home-manager = {
-#            useGlobalPkgs = true;
-#            useUserPackages = true;
-#          };
-          
+       
           environment.systemPackages = [
             pkgs.sbctl
           ];

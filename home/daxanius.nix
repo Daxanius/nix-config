@@ -22,32 +22,6 @@
     };
   };
 
-    # For Monado:
-  # xdg.configFile."openxr/1/active_runtime.json".source = "${pkgs.monado}/share/openxr/1/openxr_monado.json";
-
-  # For WiVRn v0.22 and below:
-  # xdg.configFile."openxr/1/active_runtime.json".source = "${pkgs.wivrn}/share/openxr/1/openxr_wivrn.json";
-
-  #xdg.configFile."openvr/openvrpaths.vrpath".text = ''
-  #  {
-  #    "config" :
-  #    [
-  #      "${config.xdg.dataHome}/Steam/config"
-  #    ],
-  #    "external_drivers" : null,
-  #    "jsonid" : "vrpathreg",
-  #    "log" :
-  #    [
-  #      "${config.xdg.dataHome}/Steam/logs"
-  #    ],
-  #    "runtime" :
-  #    [
-  #      "${pkgs.opencomposite}/lib/opencomposite"
-  #    ],
-  #    "version" : 1
-  #  }
-  #'';
-
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
@@ -60,24 +34,54 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.niri.settings = {
-    environment."NIXOS_OZONE_WL" = "1";
-    outputs."CHANGE-ME-eg-DP-1" = { scale = 1.0; };
+    prefer-no-csd = true;
+
+    # The nvidia driver crashes when handed a direct scanout
+    # causing a visual freeze and then an eventual reset
+    debug = {
+      disable-direct-scanout = [ ];
+    };
+    
+    input.focus-follows-mouse = {
+      enable = true;
+      max-scroll-amount = "0%";
+    };
 
     binds = with config.lib.niri.actions; {
+      "Mod+Slash".action = show-hotkey-overlay;
+
       "Mod+Left".action = focus-column-left;
       "Mod+Right".action = focus-column-right;
       "Mod+Up".action = focus-window-up;
       "Mod+Down".action = focus-window-down;
+      
       "Mod+Shift+Left".action = move-column-left;
       "Mod+Shift+Right".action = move-column-right;
       "Mod+Shift+Up".action = move-window-up;
       "Mod+Shift+Down".action = move-window-down;
-      "Mod+S".action = spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy";
-      "Mod+Return".action = spawn "kitty";
+
+      "Mod+WheelScrollDown" = {
+        action = focus-workspace-down;
+        cooldown-ms = 150;
+      };
+      
+      "Mod+WheelScrollUp" = {
+        action = focus-workspace-up;
+        cooldown-ms = 150;
+      };
+
+      "Mod+WheelScrollRight".action = focus-column-right;
+      "Mod+WheelScrollLeft".action = focus-column-left;
+
       "Mod+C".action = close-window;
-      "Mod+K".action = spawn "hyprpicker" "--autocopy" "--format=hex" "--notify";
       "Mod+Escape".action = quit;
       "Mod+F".action = toggle-window-floating;
+      "Mod+E".action = expand-column-to-available-width;
+      "Mod+M".action = maximize-column;
+      
+      "Mod+S".action = spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy";
+      "Mod+Return".action = spawn "kitty";
+      "Mod+K".action = spawn "hyprpicker" "--autocopy" "--format=hex" "--notify";
       "Mod+R".action = spawn "rofi" "-show" "drun";
       "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%+";
       "XF86AudioLowerVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%-";
@@ -100,7 +104,6 @@
 
         modules-left = [
           "clock"
-          "niri/workspaces"
         ];
 
         modules-center = [
@@ -252,6 +255,11 @@
     rofi # App launcher
     kdePackages.dolphin # File browser
     kdePackages.kio-admin
+    kdePackages.ark                    # archive support: zip/tar/etc
+    kdePackages.kio-extras             # network browsing, thumbnails, extra KIO protocols
+    kdePackages.kdegraphics-thumbnailers
+    kdePackages.ffmpegthumbs           # video thumbnails
+    kdePackages.kimageformats  
     kitty # Kitty terminal emulator
     pavucontrol # Hyprland sound control
     mako # Notification daemon for hyprland
@@ -262,11 +270,9 @@
     prismlauncher
     grim
     slurp
-    wl-clipboard
     hyprpicker
     papirus-icon-theme
     helix
-    zellij
 #     bambu-studio
     blender
     jetbrains.idea
@@ -274,9 +280,6 @@
     spotify
     vscode
     thunderbird
-    sourcegit
-    jetbrains.clion
-    jetbrains.rust-rover
     cmakeCurses
     onlyoffice-desktopeditors
     vlc
@@ -304,14 +307,19 @@
     };
   };
 
+  xdg.desktopEntries.oculante = {
+    name = "Oculante";
+    exec = "${pkgs.oculante}/bin/oculante %f";
+    type = "Application";
+    mimeType = [ "image/png" "image/jpeg" "image/gif" "image/webp" "image/bmp" "image/tiff" "image/x-icon" "image/svg+xml" ];
+  };
+
   xdg.mimeApps = {
     enable = true;
-
     defaultApplications = {
       "inode/directory" = "org.kde.dolphin.desktop";
       "x-scheme-handler/file" = "org.kde.dolphin.desktop";
 
-      # Images -> oculante
       "image/png" = "oculante.desktop";
       "image/jpeg" = "oculante.desktop";
       "image/jpg" = "oculante.desktop";
@@ -322,7 +330,6 @@
       "image/x-icon" = "oculante.desktop";
       "image/svg+xml" = "oculante.desktop";
 
-      # Videos -> vlc
       "video/mp4" = "vlc.desktop";
       "video/x-matroska" = "vlc.desktop";
       "video/webm" = "vlc.desktop";

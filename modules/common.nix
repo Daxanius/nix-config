@@ -20,7 +20,6 @@
   ];
   
   nixpkgs.config.allowUnfree = true;
-#  programs.light.enable = true;
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
@@ -30,11 +29,6 @@
   services.monado = {
     enable = true;
     defaultRuntime = true; # Register as default OpenXR runtime
-  };
-
-  services.playit = {
-    enable = true;
-    secretPath = "/home/daxanius/dev/nix-config/playit_secret.toml";
   };
 
   services.wivrn = {
@@ -84,12 +78,14 @@
     nerd-fonts.symbols-only
   ];
 
-  services.displayManager.regreet.enable = true;
-
+  services.displayManager.regreet = {
+    enable = true;
+    cageArgs = [ "-d" "-m" "last" ];
+  };
+  
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
       user = "daxanius";
     };
   };
@@ -216,7 +212,6 @@
     ethtool
     nftables
     conntrack-tools
-    tuigreet
     ffmpeg-full
     powertop
     lm_sensors
@@ -235,7 +230,7 @@
     ripgrep
     steam-run
     android-tools
-    hyprmon
+    xwayland-satellite
   ];
 
   home-manager = {

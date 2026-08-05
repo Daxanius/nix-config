@@ -49,8 +49,9 @@
       };
 
       wallpaper = {
-        enabled = false;
-        default.path = "/path/to/wallpapers/wallpaper.png";
+        enabled = true;
+        default.path = "${config.home.homeDirectory}/Pictures/wallpapers/default.png";
+        fill_mode = "crop";
       };
     };
   };
@@ -132,6 +133,16 @@
       { command = [ "noctalia" ]; }
     ];
   };
+
+  home.pointerCursor = {
+    enable = true;
+    gtk.enable = true;
+    x11.enable = true;
+
+    package = pkgs.bibata-cursors;
+    name = "Bibata-Modern-Ice";
+    size = 24;
+  };
   
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -174,6 +185,10 @@
   xdg.portal = {
     enable = true;
     config.common.default = "*";
+    config.niri = {
+      "org.freedesktop.impl.portal.FileChooser" = [ "kde" ]; # or GTK
+    };
+    
     extraPortals = with pkgs; [
       kdePackages.xdg-desktop-portal-kde
     ];

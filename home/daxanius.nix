@@ -41,6 +41,14 @@
     debug = {
       disable-direct-scanout = [ ];
     };
+
+    outputs."Microstep MSI G27C6 0x0000019A" = {
+      mode = {
+        width = 1920;
+        height = 1080;
+        refresh = 143.998;
+      };
+    };
     
     input.focus-follows-mouse = {
       enable = true;

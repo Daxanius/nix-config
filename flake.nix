@@ -4,8 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    dolphin-overlay.url = "github:rumboon/dolphin-overlay";
-
     home-manager = {
        url = "github:nix-community/home-manager";
        inputs.nixpkgs.follows = "nixpkgs";
@@ -20,6 +18,11 @@
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -32,8 +35,6 @@
         inputs.niri.nixosModules.niri
 
         ({ pkgs, lib, ... }: {
-          nixpkgs.overlays = [ inputs.dolphin-overlay.overlays.default ];
-
           environment.systemPackages = [
             pkgs.sbctl
           ];

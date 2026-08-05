@@ -6,6 +6,10 @@
 }:
 
 {
+  imports = [
+    inputs.noctalia.homeModules.default
+  ];
+  
   home.username = "daxanius";
   home.homeDirectory = "/home/daxanius";
 
@@ -33,6 +37,24 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  programs.noctalia = {
+    enable = true;
+
+    # May also be a string path to a toml file
+    settings = {
+      theme = {
+        mode = "dark";
+        source = "builtin";
+        builtin = "Catppuccin";
+      };
+
+      wallpaper = {
+        enabled = false;
+        default.path = "/path/to/wallpapers/wallpaper.png";
+      };
+    };
+  };
+
   programs.niri.settings = {
     prefer-no-csd = true;
 
@@ -40,6 +62,7 @@
     # causing a visual freeze and then an eventual reset
     debug = {
       disable-direct-scanout = [ ];
+      honor-xdg-activation-with-invalid-serial = [ ];
     };
 
     outputs."Microstep MSI G27C6 0x0000019A" = {
@@ -86,166 +109,30 @@
       "Mod+F".action = toggle-window-floating;
       "Mod+E".action = expand-column-to-available-width;
       "Mod+M".action = maximize-column;
-      
-      "Mod+S".action = spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy";
+
+      # Other launcher binds
       "Mod+Return".action = spawn "kitty";
       "Mod+K".action = spawn "hyprpicker" "--autocopy" "--format=hex" "--notify";
-      "Mod+R".action = spawn "rofi" "-show" "drun";
-      "XF86AudioRaiseVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%+";
-      "XF86AudioLowerVolume".action = spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "1%-";
-      "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
+
+      # Core noctalia binds
+      "Mod+R".action = spawn "noctalia" "msg" "panel-toggle" "launcher";
+      "Mod+Space".action = spawn "noctalia" "msg" "panel-toggle" "control-center";
+      "Mod+Comma".action = spawn "noctalia" "msg" "settings-toggle";
+
+      # Volume and brightness control
+      "XF86AudioRaiseVolume".action = spawn "noctalia" "msg" "volume-up";
+      "XF86AudioLowerVolume".action = spawn "noctalia" "msg" "volume-down";
+      "XF86AudioMute".action = spawn "noctalia" "msg" "volume-mute";
+      
+      "XF86MonBrightnessUp".action = spawn "noctalia" "msg" "brightness-up";
+      "XF86MonBrightnessDown".action = spawn "noctalia" "msg" "brightness-down";
     };
 
     spawn-at-startup = [
-      { command = [ "uwsm" "app" "--" "nm-applet" "--indicator" ]; }
-      { command = [ "systemctl" "--user" "reset-failed" "waybar.service" ]; }
+      { command = [ "noctalia" ]; }
     ];
-   };
-  
-  programs.waybar = {
-    enable = true;
-
-    settings = {
-      mainBar = {
-        layer = "top";
-        position = "top";
-
-        modules-left = [
-          "clock"
-        ];
-
-        modules-center = [
-          "temperature"
-          "custom/fan"
-          "cpu"
-          "custom/gpu"
-          "memory"
-          "custom/power"
-        ];
-
-        modules-right = [
-          "privacy"
-          "pulseaudio"
-          "custom/brightness"
-          "battery"
-          "tray"
-        ];
-
-        clock = {
-          format = "󰃰  {:%A, %d %B %R %Y}";
-          format-alt = "󰃰  {:%a %d-%m-%Y %T}";
-          tooltip-format = "{:%Z %r}";
-        };
-
-        temperature = {
-          critical-threshold = 80;
-          format = " {temperatureC}°C";
-          hwmon-path = "/sys/class/hwmon/hwmon4/temp1_input";
-        };
-
-        "custom/fan" = {
-          format = "󰈐 {} RPM";
-          interval = 5;
-          exec = "${pkgs.lm_sensors}/bin/sensors | grep 'cpu_fan' | awk '{print $2}'";
-        };
-
-        "custom/brightness" = {
-          exec = "brightnessctl -m | cut -d, -f4";
-          interval = 2;
-          format = "󰃠 {}";
-          on-scroll-up = "brightnessctl set +5%";
-          on-scroll-down = "brightnessctl set 5%-";
-        };
-
-        cpu = {
-          format = " {usage}%";
-        };
-
-        "custom/power" = {
-          exec = ''
-            if [ "$(cat /sys/class/power_supply/AC*/online 2>/dev/null | head -n1)" = "1" ]; then
-              echo "AC: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
-            else
-              echo "BAT: $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
-            fi
-          '';
-          interval = 5;
-          format = " {}";
-        };
-
-        "custom/gpu" = {
-          format = " {text}%";
-          interval = 2;
-          exec = "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits";
-          exec-if = "nvidia-smi";
-          tooltip = true;
-          on-hover = "nvidia-smi --query-gpu=temperature.gpu,memory.used,power.draw --format=csv,noheader";
-        };
-
-        memory = {
-          format = " {percentage}%";
-        };
-
-        pulseaudio = {
-          format = "  {volume}%";
-          format-muted = "muted";
-          on-click = "pavucontrol";
-        };
-
-        battery = {
-          format = "󰁹 {capacity}%";
-        };
-
-        tray = {
-          spacing = 10;
-        };
-      };
-    };
-
-    style = ''
-      * {
-        border: none;
-        border-radius: 0;
-        font-family: "JetBrainsMono Nerd Font";
-        font-size: 16px;
-      }
-
-      window#waybar>box {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-
-      window#waybar {
-        background-color: transparent;
-        border: none;
-      }
-
-      #workspaces button {
-        border-radius: 5px;
-        margin: 5px;
-      }
-
-      #workspaces button.active {
-        background: #23a2d5;
-      }
-
-      #pulseaudio.muted {
-        color: #f38ba8;
-      }
-
-      #temperature.critical {
-        color: #f38ba8;
-      }
-
-      .module {
-        padding: 1 10px;
-        margin: 0 5px 0px 5px;
-      }
-    '';
   };
-
-  programs.waybar.systemd.enable = true;
-  services.mako.enable = true;
+  
 
   home.pointerCursor = {
     enable = true;
@@ -260,7 +147,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    rofi # App launcher
     kdePackages.dolphin # File browser
     kdePackages.kio-admin
     kdePackages.ark                    # archive support: zip/tar/etc
@@ -276,8 +162,6 @@
     fluffychat
     discord
     prismlauncher
-    grim
-    slurp
     hyprpicker
     papirus-icon-theme
     helix
@@ -306,14 +190,14 @@
     ];
   };
 
-  gtk = {
-    enable = true;
-    gtk4.theme = config.gtk.theme;
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-  };
+  # gtk = {
+  #  enable = true;
+  #  gtk4.theme = config.gtk.theme;
+  #  iconTheme = {
+  #    name = "Papirus-Dark";
+  #    package = pkgs.papirus-icon-theme;
+  #  };
+  #};
 
   xdg.desktopEntries.oculante = {
     name = "Oculante";

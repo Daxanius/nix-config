@@ -167,10 +167,6 @@
     kdePackages.ffmpegthumbs           # video thumbnails
     kdePackages.kimageformats  
     kitty # Kitty terminal emulator
-    pavucontrol # Hyprland sound control
-    mako # Notification daemon for hyprland
-    libnotify # Requirement
-    networkmanagerapplet
     fluffychat
     discord
     prismlauncher

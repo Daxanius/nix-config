@@ -63,6 +63,4 @@
     enable = true;
     keychronSupport = true;
   };
-
-  services.blueman.enable = true;
 }

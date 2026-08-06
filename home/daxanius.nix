@@ -76,7 +76,6 @@
     
     input.focus-follows-mouse = {
       enable = true;
-      max-scroll-amount = "0%";
     };
 
     binds = with config.lib.niri.actions; {
@@ -107,6 +106,7 @@
 
       "Mod+C".action = close-window;
       "Mod+Escape".action = quit;
+      "Mod+Tab".action = toggle-overview;
       "Mod+F".action = toggle-window-floating;
       "Mod+E".action = expand-column-to-available-width;
       "Mod+M".action = maximize-column;
@@ -119,6 +119,10 @@
       "Mod+R".action = spawn "noctalia" "msg" "panel-toggle" "launcher";
       "Mod+Space".action = spawn "noctalia" "msg" "panel-toggle" "control-center";
       "Mod+Comma".action = spawn "noctalia" "msg" "settings-toggle";
+
+      # Misc noctalia binds
+      "Mod+S".action = spawn "noctalia" "msg" "screenshot-fullscreen";
+      "Mod+Shift+S".action = spawn "noctalia" "msg" "screenshot-region";
 
       # Volume and brightness control
       "XF86AudioRaiseVolume".action = spawn "noctalia" "msg" "volume-up";
@@ -143,6 +147,14 @@
     name = "Bibata-Modern-Ice";
     size = 24;
   };
+
+  programs.helix = {
+    enable = true;
+
+    settings = {
+      theme = "noctalia";
+    };
+  };
   
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -164,7 +176,6 @@
     prismlauncher
     hyprpicker
     papirus-icon-theme
-    helix
 #     bambu-studio
     blender
     jetbrains.idea

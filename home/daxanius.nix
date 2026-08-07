@@ -76,6 +76,7 @@
     
     input.focus-follows-mouse = {
       enable = true;
+      max-scroll-amount="10%";
     };
 
     binds = with config.lib.niri.actions; {
@@ -91,18 +92,25 @@
       "Mod+Shift+Up".action = move-window-up;
       "Mod+Shift+Down".action = move-window-down;
 
-      "Mod+WheelScrollDown" = {
+      "Mod+WheelScrollRight" = {
         action = focus-workspace-down;
-        cooldown-ms = 150;
+        cooldown-ms = 100;
+      };
+      
+      "Mod+WheelScrollLeft" = {
+        action = focus-workspace-up;
+        cooldown-ms = 100;
+      };
+
+      "Mod+WheelScrollDown" = {
+        action = focus-column-right;
+        cooldown-ms = 100;
       };
       
       "Mod+WheelScrollUp" = {
-        action = focus-workspace-up;
-        cooldown-ms = 150;
+        action = focus-column-left;
+        cooldown-ms = 100;
       };
-
-      "Mod+WheelScrollRight".action = focus-column-right;
-      "Mod+WheelScrollLeft".action = focus-column-left;
 
       "Mod+C".action = close-window;
       "Mod+Escape".action = quit;

@@ -234,6 +234,12 @@
     steam-run
     android-tools
     xwayland-satellite
+
+    # Jetbrains Rider Stuff
+    dotnet-sdk_8
+    omnisharp-roslyn
+    mono
+    msbuild
   ];
 
   home-manager = {

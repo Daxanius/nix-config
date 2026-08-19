@@ -15,6 +15,7 @@
 
   programs.git = {
     enable = true;
+    lfs.enable = true;
     settings.user = {
       name = "Daxanius";
       email = "balder.huybreghs@gmail.com";
@@ -197,6 +198,7 @@
     tracy
     unityhub
     godot
+    sourcegit
   ];
 
   xdg.portal = {

@@ -199,6 +199,7 @@
     unityhub
     godot
     sourcegit
+    krita
   ];
 
   xdg.portal = {

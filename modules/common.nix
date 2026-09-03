@@ -25,6 +25,28 @@
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     lldb
+
+    # Qt xcb platform plugin dependencies (fixes s&box project-open hang)
+    libxcb
+    libX11
+    libXext
+    libXrender
+    libXi
+    libXcursor
+    libXfixes
+    libXrandr
+    libSM
+    libICE
+    libxkbcommon
+
+    libxcb-util
+
+    fontconfig
+    freetype
+    dbus
+
+    qt6.qtbase
+    # libsForQt5.qtbase
   ];
 
   services.monado = {
@@ -240,6 +262,7 @@
     omnisharp-roslyn
     mono
     msbuild
+    python3
   ];
 
   home-manager = {

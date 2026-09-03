@@ -200,6 +200,7 @@
     godot
     sourcegit
     krita
+    obsidian
   ];
 
   xdg.portal = {

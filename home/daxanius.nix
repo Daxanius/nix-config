@@ -201,6 +201,7 @@
     sourcegit
     krita
     obsidian
+    audacity
   ];
 
   xdg.portal = {

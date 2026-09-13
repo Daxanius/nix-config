@@ -202,6 +202,7 @@
     krita
     obsidian
     audacity
+    kdePackages.okular
   ];
 
   xdg.portal = {

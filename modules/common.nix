@@ -246,6 +246,8 @@
     brightnessctl
     mangohud
     pipewire
+    bench
+    binutils
     pulseaudio
     alsa-lib
     direnv
@@ -256,13 +258,6 @@
     steam-run
     android-tools
     xwayland-satellite
-
-    # Jetbrains Rider Stuff
-    dotnet-sdk_8
-    omnisharp-roslyn
-    mono
-    msbuild
-    python3
   ];
 
   home-manager = {

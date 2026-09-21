@@ -157,6 +157,8 @@
     size = 24;
   };
 
+  services.easyeffects.enable = true;
+
   programs.helix = {
     enable = true;
 

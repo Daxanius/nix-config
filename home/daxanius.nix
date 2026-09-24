@@ -80,6 +80,8 @@
       max-scroll-amount="10%";
     };
 
+    input.mouse.accel-profile = "flat";
+
     binds = with config.lib.niri.actions; {
       "Mod+Slash".action = show-hotkey-overlay;
 

@@ -49,11 +49,6 @@
     # libsForQt5.qtbase
   ];
 
-  services.monado = {
-    enable = true;
-    defaultRuntime = true; # Register as default OpenXR runtime
-  };
-
   services.wivrn = {
     enable = true;
     openFirewall = true;
@@ -66,12 +61,6 @@
 
     # You should use the default configuration (which is no configuration), as that works the best out of the box.
     # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
-  };
-
-  systemd.user.services.monado.environment = {
-    STEAMVR_LH_ENABLE = "1";
-    XRT_COMPOSITOR_COMPUTE = "1";
-    WMR_HANDTRACKING = "0";
   };
 
   services.udev = {
@@ -104,9 +93,7 @@
     nerd-fonts.symbols-only
   ];
 
-  programs.noctalia-greeter = {
-    enable = true;
-  };
+  services.displayManager.noctalia-greeter.enable = true;
   
   services.greetd = {
     enable = true;
@@ -199,11 +186,6 @@
     enable = true;
     enableWsi = true;
     capSysNice = true;
-  };
-
-  programs.alvr = {
-    enable = true;
-    openFirewall = true;
   };
 
   programs.gamemode.enable = true;
